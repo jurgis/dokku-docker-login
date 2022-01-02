@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+[[ " help docker-login:help " == *" $1 "* ]] || exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+source "$PLUGIN_AVAILABLE_PATH/docker-login/help-functions"
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+case "$1" in
+  help | docker-login:help)
+    cmd-docker-login-help "$@"
+    ;;
+
+  *)
+    exit "$DOKKU_NOT_IMPLEMENTED_EXIT"
+    ;;
+
+esac

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+local registry_path="$DOKKU_ROOT/$APP/docker_login/registry"
+
+if [[ -f $registry_path ]]; then
+  local registry=$(cat registry_path)
+
+  dokku_log_verbose "Logging out of docker registry: $registry"
+  $DOCKER_BIN logout "$registry"
+fi

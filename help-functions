@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+cmd-docker-login-help() {
+  declare desc="help command"
+  declare CMD="$1"
+  local plugin_name="docker-login"
+  local plugin_description="Allow to fetch from a private docker registry"
+
+  if [[ "$CMD" == "${plugin_name}:help" ]]; then
+    echo -e "Usage: dokku ${plugin_name}[:COMMAND]"
+    echo ''
+    echo "$plugin_description"
+    echo ''
+    echo 'Additional commands:'
+    fn-help-content | sort | column -c2 -t -s,
+  elif [[ $(ps -o command= $PPID) == *"--all"* ]]; then
+    fn-help-content
+  else
+    cat <<help_desc
+    $plugin_name, $plugin_description
+help_desc
+  fi
+}
+
+fn-help-content() {
+  declare desc="return help content"
+  cat <<help_content
+    docker-login:set <app> <username> <password> <registry>, Set private docker registry credentials
+    docker-login:reset <app>, remove the previously set credentials
+    docker-login:report [<app>] [<flag>], Displays a docker-login report for one or more apps
+    docker-login:show-config [<app>] [<flag>], Displays a docker-login configuration for one or more apps
+help_content
+}

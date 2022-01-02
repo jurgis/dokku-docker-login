@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
+source "$PLUGIN_AVAILABLE_PATH/docker-login/internal-functions"
+set -eo pipefail
+[[ $DOKKU_TRACE ]] && set -x
+
+# docker-login:report
+cmd-docker-login-report() {
+  declare desc="displays a docker-login report for one or more apps"
+  declare cmd="docker-login:report"
+  [[ "$1" == "$cmd" ]] && shift 1
+  declare APP="$1"
+  local INSTALLED_APPS=$(dokku_apps)
+
+  if [[ -z "$APP" ]]; then
+    for app in $INSTALLED_APPS; do
+      cmd-docker-login-report-single "$app" | tee || true
+    done
+  else
+    cmd-docker-login-report-single "$APP"
+  fi
+}
+
+cmd-docker-login-report-single() {
+  declare APP="$1"
+
+  verify_app_name "$APP"
+
+  if [[ -d "$DOKKU_ROOT/$APP/docker_login" ]]; then
+    echo "enabled"
+  else
+    echo "not enabled"
+  fi
+}
+
+
+# docker-login:reset
+cmd-docker-login-reset() {
+  declare desc="reset docker-login info"
+  declare cmd="docker-login:reset"
+  [[ "$1" == "$cmd" ]] && shift 1
+  declare APP="$1"
+
+  verify_app_name "$APP"
+
+  rm -rf "$DOKKU_ROOT/$APP/docker_login" > /dev/null
+  dokku_log_verbose "Done"
+}
+
+# docker-login:set
+cmd-docker-login-set() {
+  declare desc="set docker-login info"
+  declare cmd="docker-login:set"
+  [[ "$1" == "$cmd" ]] && shift 1
+  declare APP="$1" USERNAME="$2" PASSWORD="$3" REGISTRY="$4"
+
+  verify_app_name "$APP"
+
+  if [[ ! -d "$DOKKU_ROOT/$APP/docker_login" ]]; then
+    mkdir "$DOKKU_ROOT/$APP/docker_login"
+  fi
+
+  echo -n "$USERNAME" > "$DOKKU_ROOT/$APP/docker_login/username"
+  echo -n "$PASSWORD" > "$DOKKU_ROOT/$APP/docker_login/password"
+  echo -n "$REGISTRY" > "$DOKKU_ROOT/$APP/docker_login/registry"
+}
+
+# docker-login:show-config
+cmd-docker-login-show-config() {
+  declare desc="show docker-login configuration"
+  declare cmd="docker-login:show-config"
+  [[ "$1" == "$cmd" ]] && shift 1
+  declare APP="$1"
+
+  verify_app_name "$APP"
+
+  if [[ ! -d "$DOKKU_ROOT/$APP/docker_login" ]]; then
+    dokku_log_fail "docker_login directory does not exits for $APP"
+  fi
+
+  if [[ ! -f "$DOKKU_ROOT/$APP/docker_login/username" ]]; then
+    dokku_log_fail "docker_login/username does not exits for $APP"
+  fi
+
+  if [[ ! -f "$DOKKU_ROOT/$APP/docker_login/password" ]]; then
+    dokku_log_fail "docker_login/password does not exits for $APP"
+  fi
+
+  if [[ ! -f "$DOKKU_ROOT/$APP/docker_login/registry" ]]; then
+    dokku_log_fail "docker_login/registry does not exits for $APP"
+  fi
+
+  echo -n "Username: "
+  cat "$DOKKU_ROOT/$APP/docker_login/username"
+  echo -n "Password: "
+  cat "$DOKKU_ROOT/$APP/docker_login/password"
+  echo -n "Registry: "
+  cat "$DOKKU_ROOT/$APP/docker_login/registry"
+}
