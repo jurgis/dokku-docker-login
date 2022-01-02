@@ -2,11 +2,15 @@
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
-local registry_path="$DOKKU_ROOT/$APP/docker_login/registry"
+trigger-docker-login-post-build-dockerfile() {
+  local registry_path="$DOKKU_ROOT/$APP/docker_login/registry"
 
-if [[ -f $registry_path ]]; then
-  local registry=$(cat registry_path)
+  if [[ -f $registry_path ]]; then
+    local registry=$(cat registry_path)
 
-  dokku_log_verbose "Logging out of docker registry: $registry"
-  $DOCKER_BIN logout "$registry"
-fi
+    dokku_log_verbose "Logging out of docker registry: $registry"
+    $DOCKER_BIN logout "$registry"
+  fi
+}
+
+trigger-docker-login-post-build-dockerfile "$@"

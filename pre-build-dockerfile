@@ -2,16 +2,20 @@
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
-local dir="$DOKKU_ROOT/$APP/docker_login"
-local username_path="$dir/username"
-local password_path="$dir/password"
-local registry_path="$dir/registry"
+trigger-docker-login-pre-build-dockerfile() {
+  local dir="$DOKKU_ROOT/$APP/docker_login"
+  local username_path="$dir/username"
+  local password_path="$dir/password"
+  local registry_path="$dir/registry"
 
-if [[ -d $dir && -f $username_path && -f password_path && -f registry_path ]]; then
-  local username=$(cat username_path)
-  local password=$(cat password_path)
-  local registry=$(cat registry_path)
+  if [[ -d $dir && -f $username_path && -f password_path && -f registry_path ]]; then
+    local username=$(cat username_path)
+    local password=$(cat password_path)
+    local registry=$(cat registry_path)
 
-  dokku_log_verbose "Logging into docker registry: $registry with username: $username"
-  echo -n $password | $DOCKER_BIN login --username $username --password-stdin $registry
-fi
+    dokku_log_verbose "Logging into docker registry: $registry with username: $username"
+    echo -n $password | $DOCKER_BIN login --username $username --password-stdin $registry
+  fi
+}
+
+trigger-docker-login-pre-build-dockerfile "$@"

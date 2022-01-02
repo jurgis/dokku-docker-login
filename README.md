@@ -4,9 +4,12 @@ dokku-docker-login is a plugin for [dokku][dokku] that gives the ability to depl
 
 ## Installation
 
-```sh
+```bash
 # dokku 0.4+
 $ sudo dokku plugin:install https://github.com/jurgis/dokku-docker-login.git
+
+# update the plugin
+$ sudo dokku plugin:update docker-login
 ```
 
 ## Commands

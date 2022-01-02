@@ -57,14 +57,17 @@ cmd-docker-login-set() {
   declare APP="$1" USERNAME="$2" PASSWORD="$3" REGISTRY="$4"
 
   verify_app_name "$APP"
+  local dir="$DOKKU_ROOT/$APP/docker_login"
 
-  if [[ ! -d "$DOKKU_ROOT/$APP/docker_login" ]]; then
-    mkdir "$DOKKU_ROOT/$APP/docker_login"
+  if [[ ! -d $dir ]]; then
+    dokku_log_info1 "Creating directory: $dir"
+    mkdir "$dir"
   fi
 
-  echo -n "$USERNAME" > "$DOKKU_ROOT/$APP/docker_login/username"
-  echo -n "$PASSWORD" > "$DOKKU_ROOT/$APP/docker_login/password"
-  echo -n "$REGISTRY" > "$DOKKU_ROOT/$APP/docker_login/registry"
+  dokku_log_info1 "Setting username: $USERNAME password: $PASSWORD registry: $REGISTRY"
+  echo -n "$USERNAME" > "$dir/username"
+  echo -n "$PASSWORD" > "$dir/password"
+  echo -n "$REGISTRY" > "$dir/registry"
 }
 
 # docker-login:show-config
