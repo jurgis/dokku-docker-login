@@ -29,7 +29,7 @@ fn-help-content() {
   cat <<help_content
     docker-login:set <app> <username> <password> <registry>, Set private docker registry credentials
     docker-login:reset <app>, remove the previously set credentials
-    docker-login:report [<app>] [<flag>], Displays a docker-login report for one or more apps
-    docker-login:show-config [<app>] [<flag>], Displays a docker-login configuration for one or more apps
+    docker-login:report [<app>], Displays a docker-login report for one or more apps
+    docker-login:show-config [<app>], Displays a docker-login configuration for one or more apps
 help_content
 }

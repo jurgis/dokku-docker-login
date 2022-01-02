@@ -6,7 +6,7 @@ dokku-docker-login is a plugin for [dokku][dokku] that gives the ability to depl
 
 ```sh
 # dokku 0.4+
-$ dokku plugin:install https://github.com/jurgis/dokku-docker-login.git
+$ sudo dokku plugin:install https://github.com/jurgis/dokku-docker-login.git
 ```
 
 ## Commands

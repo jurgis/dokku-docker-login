@@ -26,11 +26,12 @@ cmd-docker-login-report-single() {
   declare APP="$1"
 
   verify_app_name "$APP"
-
+  
+  dokku_log_info2_quiet "${APP} docker-login information"
   if [[ -d "$DOKKU_ROOT/$APP/docker_login" ]]; then
-    echo "enabled"
+    dokku_log_info1 "enabled"
   else
-    echo "not enabled"
+    dokku_log_info1 "not enabled"
   fi
 }
 
