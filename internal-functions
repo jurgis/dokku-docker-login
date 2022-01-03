@@ -73,7 +73,7 @@ fn-docker-login-reset() {
 fn-docker-login-logout() {
   declare APP="$1"
 
-  if [[ $(fn-docker-login-is-configured "$APP" == "true")]]; then
+  if [[ $(fn-docker-login-is-configured "$APP") == "true" ]]; then
     local registry=$(fn-docker-login-get-registry)
     dokku_log_verbose "Logging out of docker registry: $registry"
     $DOCKER_BIN logout "$registry"
@@ -83,7 +83,7 @@ fn-docker-login-logout() {
 fn-docker-login-login() {
   declare APP="$1"
 
-  if [[ $(fn-docker-login-is-configured "$APP" == "true")]]; then
+  if [[ $(fn-docker-login-is-configured "$APP") == "true" ]]; then
     local username=$(fn-docker-login-get-username)
     local password=$(fn-docker-login-get-password)
     local registry=$(fn-docker-login-get-registry)
