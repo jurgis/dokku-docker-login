@@ -32,17 +32,17 @@ fn-docker-login-is-configured() {
 
 fn-docker-login-get-username() {
   declare APP="$1"
-  $(cat $fn-docker-login-get-username-path "$APP")
+  cat $(fn-docker-login-get-username-path "$APP")
 }
 
 fn-docker-login-get-password() {
   declare APP="$1"
-  $(cat $fn-docker-login-get-password-path "$APP")
+  cat $(fn-docker-login-get-password-path "$APP")
 }
 
 fn-docker-login-get-registry() {
   declare APP="$1"
-  $(cat $fn-docker-login-get-registry-path "$APP")
+  cat $(fn-docker-login-get-registry-path "$APP")
 }
 
 fn-docker-login-login() {
