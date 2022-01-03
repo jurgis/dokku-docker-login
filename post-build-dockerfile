@@ -1,16 +1,14 @@
 #!/usr/bin/env bash
+source "$PLUGIN_AVAILABLE_PATH/docker-login/internal-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
 trigger-docker-login-post-build-dockerfile() {
-  local registry_path="$DOKKU_ROOT/$APP/docker_login/registry"
+  declare desc="post build dockerfile"
+  declare trigger="post-build-dockerfile"
+  declare APP="$1"
 
-  if [[ -f $registry_path ]]; then
-    local registry=$(cat registry_path)
-
-    dokku_log_verbose "Logging out of docker registry: $registry"
-    $DOCKER_BIN logout "$registry"
-  fi
+  fn-docker-login-logout "$APP"
 }
 
 trigger-docker-login-post-build-dockerfile "$@"

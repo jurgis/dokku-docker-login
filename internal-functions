@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
+source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
@@ -46,7 +48,7 @@ fn-docker-login-get-registry() {
   cat $(fn-docker-login-get-registry-path "$APP")
 }
 
-fn-docker-login-login() {
+fn-docker-login-set() {
   declare APP="$1" USERNAME="$2" PASSWORD="$3" REGISTRY="$4"
 
   verify_app_name "$APP"
@@ -63,7 +65,30 @@ fn-docker-login-login() {
   echo -n "$REGISTRY" > $(fn-docker-login-get-registry-path "$APP")
 }
 
-fn-docker-login-logout() {
+fn-docker-login-reset() {
   declare APP="$1"
   rm -rf $(fn-docker-login-get-dir-path "$APP")
+}
+
+fn-docker-login-logout() {
+  declare APP="$1"
+
+  if [[ $(fn-docker-login-is-configured "$APP" == "true")]]; then
+    local registry=$(fn-docker-login-get-registry)
+    dokku_log_verbose "Logging out of docker registry: $registry"
+    $DOCKER_BIN logout "$registry"
+  fi
+}
+
+fn-docker-login-login() {
+  declare APP="$1"
+
+  if [[ $(fn-docker-login-is-configured "$APP" == "true")]]; then
+    local username=$(fn-docker-login-get-username)
+    local password=$(fn-docker-login-get-password)
+    local registry=$(fn-docker-login-get-registry)
+
+    dokku_log_verbose "Logging into docker registry: $registry with username: $username"
+    echo -n "$password" | $DOCKER_BIN login --username "$username" --password-stdin "$registry"
+  fi
 }

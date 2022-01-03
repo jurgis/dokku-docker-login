@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-source "$PLUGIN_CORE_AVAILABLE_PATH/common/functions"
-source "$PLUGIN_CORE_AVAILABLE_PATH/common/property-functions"
 source "$PLUGIN_AVAILABLE_PATH/docker-login/internal-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
@@ -45,7 +43,7 @@ cmd-docker-login-reset() {
 
   verify_app_name "$APP"
 
-  fn-docker-login-logout "$APP"
+  fn-docker-login-reset "$APP"
   dokku_log_verbose "Done"
 }
 
@@ -56,7 +54,7 @@ cmd-docker-login-set() {
   [[ "$1" == "$cmd" ]] && shift 1
   declare APP="$1" USERNAME="$2" PASSWORD="$3" REGISTRY="$4"
 
-  fn-docker-login-login "$APP" "$USERNAME" "$PASSWORD" "$REGISTRY"
+  fn-docker-login-set "$APP" "$USERNAME" "$PASSWORD" "$REGISTRY"
 }
 
 # docker-login:show-config

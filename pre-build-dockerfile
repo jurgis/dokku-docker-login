@@ -1,21 +1,14 @@
 #!/usr/bin/env bash
+source "$PLUGIN_AVAILABLE_PATH/docker-login/internal-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
 trigger-docker-login-pre-build-dockerfile() {
-  local dir="$DOKKU_ROOT/$APP/docker_login"
-  local username_path="$dir/username"
-  local password_path="$dir/password"
-  local registry_path="$dir/registry"
+  declare desc="pre build dockerfile"
+  declare trigger="pre-build-dockerfile"
+  declare APP="$1"
 
-  if [[ -d $dir && -f $username_path && -f password_path && -f registry_path ]]; then
-    local username=$(cat username_path)
-    local password=$(cat password_path)
-    local registry=$(cat registry_path)
-
-    dokku_log_info1 "Logging into docker registry: $registry with username: $username"
-    echo -n $password | $DOCKER_BIN login --username $username --password-stdin $registry
-  fi
+  fn-docker-login-login "$APP"
 }
 
 trigger-docker-login-pre-build-dockerfile "$@"
