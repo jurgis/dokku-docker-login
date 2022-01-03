@@ -13,7 +13,7 @@ trigger-docker-login-pre-build-dockerfile() {
     local password=$(cat password_path)
     local registry=$(cat registry_path)
 
-    dokku_log_verbose "Logging into docker registry: $registry with username: $username"
+    dokku_log_info1 "Logging into docker registry: $registry with username: $username"
     echo -n $password | $DOCKER_BIN login --username $username --password-stdin $registry
   fi
 }

@@ -27,11 +27,11 @@ cmd-docker-login-report-single() {
 
   verify_app_name "$APP"
   
-  dokku_log_info2_quiet "${APP} docker-login information"
-  if [[ -d "$DOKKU_ROOT/$APP/docker_login" ]]; then
-    dokku_log_info1 "enabled"
+  dokku_log_info2 "${APP} docker-login information"
+  if [[ fn-docker-login-is-configured "$APP" ]]; then
+    dokku_log_verbose "enabled"
   else
-    dokku_log_info1 "not enabled"
+    dokku_log_verbose "not enabled"
   fi
 }
 
@@ -45,7 +45,7 @@ cmd-docker-login-reset() {
 
   verify_app_name "$APP"
 
-  rm -rf "$DOKKU_ROOT/$APP/docker_login" > /dev/null
+  fn-docker-login-logout "$APP"
   dokku_log_verbose "Done"
 }
 
@@ -56,18 +56,7 @@ cmd-docker-login-set() {
   [[ "$1" == "$cmd" ]] && shift 1
   declare APP="$1" USERNAME="$2" PASSWORD="$3" REGISTRY="$4"
 
-  verify_app_name "$APP"
-  local dir="$DOKKU_ROOT/$APP/docker_login"
-
-  if [[ ! -d $dir ]]; then
-    dokku_log_info1 "Creating directory: $dir"
-    mkdir "$dir"
-  fi
-
-  dokku_log_info1 "Setting username: $USERNAME password: $PASSWORD registry: $REGISTRY"
-  echo -n "$USERNAME" > "$dir/username"
-  echo -n "$PASSWORD" > "$dir/password"
-  echo -n "$REGISTRY" > "$dir/registry"
+  fn-docker-login-login "$APP" "$USERNAME" "$PASSWORD" "$REGISTRY"
 }
 
 # docker-login:show-config
@@ -79,26 +68,11 @@ cmd-docker-login-show-config() {
 
   verify_app_name "$APP"
 
-  if [[ ! -d "$DOKKU_ROOT/$APP/docker_login" ]]; then
-    dokku_log_fail "docker_login directory does not exits for $APP"
+  if [[ ! fn-docker-login-is-configured "$APP" ]]; then
+    dokku_log_fail "docker login is not configured for $APP"
   fi
 
-  if [[ ! -f "$DOKKU_ROOT/$APP/docker_login/username" ]]; then
-    dokku_log_fail "docker_login/username does not exits for $APP"
-  fi
-
-  if [[ ! -f "$DOKKU_ROOT/$APP/docker_login/password" ]]; then
-    dokku_log_fail "docker_login/password does not exits for $APP"
-  fi
-
-  if [[ ! -f "$DOKKU_ROOT/$APP/docker_login/registry" ]]; then
-    dokku_log_fail "docker_login/registry does not exits for $APP"
-  fi
-
-  echo -n "Username: "
-  cat "$DOKKU_ROOT/$APP/docker_login/username"
-  echo -n "Password: "
-  cat "$DOKKU_ROOT/$APP/docker_login/password"
-  echo -n "Registry: "
-  cat "$DOKKU_ROOT/$APP/docker_login/registry"
+  echo "Username: $(fn-docker-login-get-username $APP)"
+  echo "Password: $(fn-docker-login-get-password $APP)"
+  echo "Registry: $(fn-docker-login-get-registry $APP)"
 }

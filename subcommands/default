@@ -3,4 +3,4 @@ source "$PLUGIN_AVAILABLE_PATH/docker-login/help-functions"
 set -eo pipefail
 [[ $DOKKU_TRACE ]] && set -x
 
-cmd-docker-login-help "$@"
+cmd-docker-login-help "docker-login:help"
