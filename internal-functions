@@ -26,8 +26,9 @@ fn-docker-login-is-configured() {
   declare APP="$1"
   if [[ -d $(fn-docker-login-get-dir-path "$APP") ]]; then
     echo -n "true"
+  else
+    echo -n "false"
   fi
-  echo -n "false"
 }
 
 fn-docker-login-get-username() {
