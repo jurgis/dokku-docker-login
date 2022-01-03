@@ -4,52 +4,52 @@ set -eo pipefail
 
 fn-docker-login-get-dir-path() {
   declare APP="$1"
-  return "$DOKKU_ROOT/$APP/docker_login"
+  echo -n "$DOKKU_ROOT/$APP/docker_login"
 }
 
 fn-docker-login-get-username-path() {
   declare APP="$1"
-  return "$(fn-docker-login-get-dir-path "$APP")/username"
+  echo -n "$(fn-docker-login-get-dir-path "$APP")/username"
 }
 
 fn-docker-login-get-password-path() {
   declare APP="$1"
-  return "$(fn-docker-login-get-dir-path "$APP")/password"
+  echo -n "$(fn-docker-login-get-dir-path "$APP")/password"
 }
 
 fn-docker-login-get-registry-path() {
   declare APP="$1"
-  return "$(fn-docker-login-get-dir-path "$APP")/registry"
+  echo -n "$(fn-docker-login-get-dir-path "$APP")/registry"
 }
 
 fn-docker-login-is-configured() {
   declare APP="$1"
   if [[ -d $(fn-docker-login-get-dir-path "$APP") ]]; then
-    return true
+    return 0
   fi
-  return false
+  return 1
 }
 
 fn-docker-login-get-username() {
   declare APP="$1"
-  return $(cat $fn-docker-login-get-username-path "$APP")
+  $(cat $fn-docker-login-get-username-path "$APP")
 }
 
 fn-docker-login-get-password() {
   declare APP="$1"
-  return $(cat $fn-docker-login-get-password-path "$APP")
+  $(cat $fn-docker-login-get-password-path "$APP")
 }
 
 fn-docker-login-get-registry() {
   declare APP="$1"
-  return $(cat $fn-docker-login-get-registry-path "$APP")
+  $(cat $fn-docker-login-get-registry-path "$APP")
 }
 
 fn-docker-login-login() {
   declare APP="$1" USERNAME="$2" PASSWORD="$3" REGISTRY="$4"
 
   verify_app_name "$APP"
-  local dir=fn-docker-login-get-dir-path "$APP"
+  local dir=$(fn-docker-login-get-dir-path "$APP")
 
   if [[ ! -d $dir ]]; then
     dokku_log_verbose "Creating directory: $dir"
@@ -57,10 +57,9 @@ fn-docker-login-login() {
   fi
 
   dokku_log_verbose "Setting username: $USERNAME password: $PASSWORD registry: $REGISTRY"
-  echo -n "$USERNAME" > fn-docker-login-get-username-path "$APP"
-  echo -n "$PASSWORD" > fn-docker-login-get-password-path "$APP"
-  echo -n "$REGISTRY" > fn-docker-login-get-registry-path "$APP"
-
+  echo -n "$USERNAME" > $(fn-docker-login-get-username-path "$APP")
+  echo -n "$PASSWORD" > $(fn-docker-login-get-password-path "$APP")
+  echo -n "$REGISTRY" > $(fn-docker-login-get-registry-path "$APP")
 }
 
 fn-docker-login-logout() {
