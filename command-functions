@@ -28,7 +28,7 @@ cmd-docker-login-report-single() {
   verify_app_name "$APP"
   
   dokku_log_info2 "${APP} docker-login information"
-  if [[ -z $(fn-docker-login-is-configured "$APP") ]]; then
+  if [[ $(fn-docker-login-is-configured "$APP") == "true" ]]; then
     dokku_log_verbose "enabled"
   else
     dokku_log_verbose "not enabled"
@@ -68,7 +68,7 @@ cmd-docker-login-show-config() {
 
   verify_app_name "$APP"
 
-  if [[ ! -z $(fn-docker-login-is-configured "$APP") ]]; then
+  if [[ $(fn-docker-login-is-configured "$APP") == "false" ]]; then
     dokku_log_fail "docker login is not configured for $APP"
   fi
 
