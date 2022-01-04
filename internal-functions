@@ -74,7 +74,7 @@ fn-docker-login-logout() {
   declare APP="$1"
 
   if [[ $(fn-docker-login-is-configured "$APP") == "true" ]]; then
-    local registry=$(fn-docker-login-get-registry)
+    local registry=$(fn-docker-login-get-registry "$APP")
     dokku_log_verbose "Logging out of docker registry: $registry"
     $DOCKER_BIN logout "$registry"
   fi
