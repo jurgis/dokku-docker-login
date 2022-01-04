@@ -84,9 +84,9 @@ fn-docker-login-login() {
   declare APP="$1"
 
   if [[ $(fn-docker-login-is-configured "$APP") == "true" ]]; then
-    local username=$(fn-docker-login-get-username)
-    local password=$(fn-docker-login-get-password)
-    local registry=$(fn-docker-login-get-registry)
+    local username=$(fn-docker-login-get-username "$APP")
+    local password=$(fn-docker-login-get-password "$APP")
+    local registry=$(fn-docker-login-get-registry "$APP")
 
     dokku_log_verbose "Logging into docker registry: $registry with username: $username"
     echo -n "$password" | $DOCKER_BIN login --username "$username" --password-stdin "$registry"
